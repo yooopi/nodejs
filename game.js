@@ -12,9 +12,6 @@
 const Sugar = require("sugar");
 const shapes = ["rock", "paper", "scissor"];
 
-let userShape = "rock";
-let botShape = "scissor";
-
 const duel = (user, bot) => {
   if (user === bot) {
     console.log("Draw!");
