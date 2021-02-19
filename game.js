@@ -1,44 +1,45 @@
-// const minimist = require("minimist");
-
-// let arguments = minimist(process.argv.slice(2), {
-//   alias: {
-//     help: "h",
-//     test: "t",
-//   },
-//   boolean: ["lol"],
-// });
-
-// console.log(arguments);
-const Sugar = require("sugar");
 const shapes = ["rock", "paper", "scissor"];
+const score = {
+  draw: 0,
+  player: 1,
+  bot: -1,
+};
 
-const duel = (user, bot) => {
-  if (user === bot) {
-    console.log("Draw!");
-    return "Draw";
+const getRandom = (arr) => {
+  return arr[Math.floor(Math.random() * arr.length)];
+};
+
+const calcWinner = (player, bot) => {
+  if (player === bot) {
+    return score.draw;
   }
 
-  switch (user) {
+  let result;
+  switch (player) {
     case "rock":
-      bot === "paper" ? console.log("User lost :(") : console.log("User win!");
+      bot === "paper" ? (result = score.bot) : (result = score.player);
       break;
-
     case "paper":
-      bot === "scissor"
-        ? console.log("User lost :(")
-        : console.log("User win!");
+      bot === "scissor" ? (result = score.bot) : (result = score.player);
       break;
-
     case "scissor":
-      bot === "rock" ? console.log("User lost :(") : console.log("User win!");
+      bot === "rock" ? (result = score.bot) : (result = score.player);
       break;
   }
+  return result;
 };
 
-const game = () => {
-  let bot = Sugar.Array.sample(shapes);
-  let user = Sugar.Array.sample(shapes);
-  duel(user, bot);
-};
+module.exports = game = (player) => {
+  return new Promise((resolve, reject) => {
+    const bot = getRandom(shapes);
+    if (!shapes.includes(player)) {
+      reject(console.error("Invalid value! Type on of: rock, paper, scissor"));
+    }
 
-game();
+    resolve({
+      player: player,
+      bot: bot,
+      playerScore: calcWinner(player, bot),
+    });
+  });
+};

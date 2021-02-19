@@ -1,7 +1,7 @@
 {
   "name": "nodejs",
   "version": "1.0.0",
-  "description": "",
+  "description": "node 14.15.1",
   "main": "chess.js",
   "scripts": {
     "chess": "node chess.js"
@@ -10,7 +10,6 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "minimist": "^1.2.5",
-    "sugar": "^2.0.6"
+    "minimist": "^1.2.5"
   }
 }
