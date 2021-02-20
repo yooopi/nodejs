@@ -1,22 +1,20 @@
+// Наверное, стоило сделать обработку любого типа данных
+const fs = require("fs");
+
 // module.exports = logger = (obj) => {
 
 // }
 
-const fs = require("fs");
-
-const changeData = () => {
-  const createdAt = new Date();
-  const logDate = `${createdAt.getDate()}.${
-    createdAt.getMonth() + 1
-  }.${createdAt.getFullYear()} ${createdAt.getHours()}:${createdAt.getMinutes()}:${createdAt.getSeconds()}`;
-  return logDate;
+const addDateToData = (data) => {
+  return [{ data: data, date: new Date() }];
 };
 
 const logger = (data, fileName) => {
-  changeData();
+  data = JSON.stringify(addDateToData(data));
+  console.log(JSON.parse(data).date);
   fs.appendFile(fileName, data, (err) => {
     err ? console.error(err) : console.log("Written");
   });
 };
 
-logger(`${changeData()} data111222\n`, "kek.txt");
+logger(`data111222`, "kek.json");
