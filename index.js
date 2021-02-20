@@ -5,9 +5,7 @@ const game = require("./game");
 let arguments = minimist(process.argv.slice(2), {
   alias: {
     log: "l",
-    dev: "d",
   },
-  boolean: ["dev"],
 });
 
 if (arguments.dev || arguments.log) {

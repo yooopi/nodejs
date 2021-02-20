@@ -1,20 +1,23 @@
-// Наверное, стоило сделать обработку любого типа данных
+// Работает только с объектами, что плохо
 const fs = require("fs");
 
-// module.exports = logger = (obj) => {
+let objToWrite = {aaa: "a", b: 1} // хотел получать этот объект из game.js
 
-// }
-
-const addDateToData = (data) => {
-  return [{ data: data, date: new Date() }];
+const formatData = (data) => {
+  return {...data, date: `${new Date()}`}
 };
 
-const logger = (data, fileName) => {
-  data = JSON.stringify(addDateToData(data));
-  console.log(JSON.parse(data).date);
-  fs.appendFile(fileName, data, (err) => {
-    err ? console.error(err) : console.log("Written");
-  });
-};
+objToWrite = formatData(objToWrite)
+fs.readFile("log.json", 'utf8', (err, data) => {
+  if (err) throw err
+  let readedObj
+  data.length === 0 ? readedObj = [] : readedObj = JSON.parse(data)
+  const toWrite = JSON.stringify([...readedObj, objToWrite])
+  
+  fs.writeFile("log.json", toWrite, (err) => {
+        err ? console.error(err) : console.log("Written");
+      });
+});
 
-logger(`data111222`, "kek.json");
+  module.exports = logger = () => {
+  }

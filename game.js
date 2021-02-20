@@ -36,10 +36,10 @@ module.exports = game = (player) => {
       reject(console.error("Invalid value! Type on of: rock, paper, scissor"));
     }
 
-    resolve([{
+    resolve({
       player: player,
       bot: bot,
       playerScore: calcWinner(player, bot),
-    }]);
+    });
   });
 };
