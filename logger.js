@@ -1,23 +1,29 @@
-// Работает только с объектами, что плохо
+// Работает только с объектами и записывает в json
 const fs = require("fs");
+const chalk = require("chalk");
 
-let objToWrite = {aaa: "a", b: 1} // хотел получать этот объект из game.js
+module.exports = logger = (objToWrite, path) => {
+  path = `${path}.json`;
+  if (typeof objToWrite !== "object")
+    return console.log("Logger param should be a object!");
 
-const formatData = (data) => {
-  return {...data, date: `${new Date()}`}
-};
+  objToWrite = { ...objToWrite, date: `${new Date().toLocaleString()}` };
 
-objToWrite = formatData(objToWrite)
-fs.readFile("log.json", 'utf8', (err, data) => {
-  if (err) throw err
-  let readedObj
-  data.length === 0 ? readedObj = [] : readedObj = JSON.parse(data)
-  const toWrite = JSON.stringify([...readedObj, objToWrite])
-  
-  fs.writeFile("log.json", toWrite, (err) => {
-        err ? console.error(err) : console.log("Written");
+  (async () => {
+    if (!fs.existsSync(path)) {
+      fs.writeFile(path, JSON.stringify([]), (err) => {
+        err ? console.error(err) : console.log(`${path} created`);
       });
-});
-
-  module.exports = logger = () => {
-  }
+    }
+  })().then(
+    fs.readFile(path, "utf8", (err, data) => {
+      if (err) throw err;
+      let readedObj;
+      data.length === 0 ? (readedObj = []) : (readedObj = JSON.parse(data));
+      const toWrite = JSON.stringify([...readedObj, objToWrite]);
+      fs.writeFile(path, toWrite, (err) => {
+        err ? console.error(err) : console.log(chalk.gray("Log written"));
+      });
+    })
+  );
+};

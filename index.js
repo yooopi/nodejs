@@ -1,29 +1,43 @@
 const minimist = require("minimist");
 const readline = require("readline");
 const game = require("./game");
+const logger = require("./logger");
+const chalk = require("chalk");
 
-let arguments = minimist(process.argv.slice(2), {
+const arguments = minimist(process.argv.slice(2), {
   alias: {
     log: "l",
   },
 });
-
-if (arguments.dev || arguments.log) {
-  console.log("lol");
-}
 
 const rl = readline.createInterface({
   input: process.stdin,
   output: process.stdout,
 });
 
-async function test() {
+const renderGameResult = (res) => {
+  console.log(
+    chalk.blueBright(
+      `Bot showed a ${res.bot}. ${
+        res.playerScore === 1
+          ? "You win!"
+          : res.playerScore === -1
+          ? "You lost :("
+          : "Draw..."
+      }`
+    )
+  );
+};
+
+function run(arguments) {
   rl.on("line", (line) => {
-    game(line).then(
-      (res) => console.log(res),
-      (err) => new Error()
-    );
+    game(line)
+      .then((res) => {
+        logger(res, arguments.log);
+        return res;
+      })
+      .then((res) => renderGameResult(res));
   });
 }
 
-test();
+run(arguments);
