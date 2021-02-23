@@ -4,7 +4,8 @@
   "description": "node 14.15.1",
   "main": "chess.js",
   "scripts": {
-    "chess": "node chess.js"
+    "dev": "npx nodemon server",
+    "news": "node news"
   },
   "keywords": [],
   "author": "",
@@ -12,9 +13,6 @@
   "dependencies": {
     "axios": "^0.21.1",
     "cheerio": "^1.0.0-rc.5",
-    "express": "^4.17.1",
-    "nodemailer": "^6.4.18",
-    "nodemailer-smtp-transport": "^2.7.4",
-    "request": "^2.88.2"
+    "express": "^4.17.1"
   }
 }

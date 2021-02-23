@@ -1,6 +1,6 @@
 const axios = require("axios");
-var cheerio = require("cheerio");
-var newsSelector = `.post__title_link`;
+const cheerio = require("cheerio");
+const newsSelector = `.post__title_link`;
 
 axios
   .get("https://habr.com/ru/news/")
