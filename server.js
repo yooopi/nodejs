@@ -1,6 +1,5 @@
 const express = require("express");
 const app = express();
-const path = require("path");
 const translate = require("./translate");
 
 app.use(express.static(__dirname + "/public"));
@@ -9,7 +8,7 @@ app.use(express.urlencoded({ extended: true }));
 
 app.post("/translate", async (req, res) => {
   const yres = await translate(req.body.texts, req.body.targetLanguageCode);
-  console.log(`RESPONSE: ${yres.data.translations}`);
+
   // Такой шаблон не лучший вариант, но быстрый
   res.send(`<form method="POST" action="/translate">
   <input name="texts" type="text" />
