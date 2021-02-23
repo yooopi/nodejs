@@ -14,21 +14,25 @@ app.get("/", (req, res) => {
   res.sendFile(__dirname + "/index.html");
 });
 
-app.post("/translate", (req, res) => {
+app.post("/translate", async (req, res) => {
   let toTranslate = { ...req.body, FOLDER_ID };
-  axios
-    .post(
-      "https://translate.api.cloud.yandex.net/translate/v2/translate",
-      toTranslate,
-      {
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${TOKEN}`,
-        },
-      }
-    )
-    .then((res) => console.log(res.data))
-    .catch((err) => console.log(err));
+  try{
+    const response = await axios
+      .post(
+        "https://translate.api.cloud.yandex.net/translate/v2/translate",
+        toTranslate,
+        {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${TOKEN}`,
+          },
+        }
+      )
+    console.log(response.data)
+  }catch(err){
+    console.error(err)
+  }
+  res.end()
 });
 
 app.listen(3000, () => console.log("Listening on port 3000"));
