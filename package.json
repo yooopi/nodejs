@@ -1,17 +1,20 @@
 {
   "name": "nodejs",
   "version": "1.0.0",
-  "description": "",
+  "description": "node 14.15.1",
   "main": "chess.js",
   "scripts": {
-    "chess": "node chess.js"
+    "dev": "npx nodemon server",
+    "news": "node news"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "ascii": "^1.0.0",
-    "chalk": "^4.1.0",
-    "chess.js": "^0.11.0"
+    "axios": "^0.21.1",
+    "cheerio": "^1.0.0-rc.5",
+    "consolidate": "^0.16.0",
+    "express": "^4.17.1",
+    "handlebars": "^4.7.7"
   }
 }
