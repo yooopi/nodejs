@@ -6,7 +6,7 @@ const data = {
     url: "https://habr.com/ru/news/",
     selector: ".post__title_link",
   },
-  dddnews: {
+  "3dnews": {
     url: "https://3dnews.ru/",
     selector:
       "#allnews > div.allnews-col.rncol > div.content-block-data.white > ul > li > a",
@@ -18,16 +18,17 @@ const data = {
   },
 };
 
-module.exports = async (resource) => {
+module.exports = async (source, count) => {
   const res = await axios
-    .get(data[resource].url)
+    .get(data[source].url)
     .then((res) => {
       const news = [];
       const $ = cheerio.load(res.data);
-      $(data[resource].selector).each(function (i, elem) {
+      $(data[source].selector).each(function (i, elem) {
         news.push($(this).text());
       });
-      return news;
+
+      return news.splice(0, count);
     })
     .catch((err) => console.log(`Error: ${err}`));
   return res;

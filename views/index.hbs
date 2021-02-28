@@ -11,15 +11,22 @@
 <body>
     <form method="POST" action="/news">
         <h1>Выберите источник и кол-во новостей</h1>
-        <select name="resource">
-            <option value="habr">Habr</option>
-            <option value="dddnews">3dnews</option>
-            <option value="navalny">Navalny</option>
+        <select name="source">
+            <option value="habr" {{selected 'habr' source}}>Habr</option>
+            <option value="3dnews" {{selected '3dnews' source}}>3dnews</option>
+            <option value="navalny" {{selected 'navalny' source}}>Navalny</option>
         </select>
-        <input type="number" name="count" min="1" max="20">
+        <input type="number" name="count" min="1" max="15" value="{{count}}" required>
         <button type="submit">SEND</button>
     </form>
-    <ul></ul>
+    {{#if news}}
+    <h2>Новостей запрошено с {{source}}: {{count}}</h2>
+    {{/if}}
+    <ul class="people_list">
+        {{#each news}}
+        <li>{{this}}</li>
+        {{/each}}
+    </ul>
 </body>
 
 </html>
