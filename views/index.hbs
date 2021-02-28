@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+</head>
+
+<body>
+    <form method="POST" action="/news">
+        <h1>Выберите источник и кол-во новостей</h1>
+        <select name="source">
+            <option value="habr" {{selected 'habr' source}}>Habr</option>
+            <option value="3dnews" {{selected '3dnews' source}}>3dnews</option>
+            <option value="navalny" {{selected 'navalny' source}}>Navalny</option>
+        </select>
+        <input type="number" name="count" min="1" max="15" value="{{count}}" required>
+        <button type="submit">SEND</button>
+    </form>
+    {{#if news}}
+    <h2>Новостей запрошено с {{source}}: {{count}}</h2>
+    {{/if}}
+    <ul class="people_list">
+        {{#each news}}
+        <li>{{this}}</li>
+        {{/each}}
+    </ul>
+</body>
+
+</html>
