@@ -42,6 +42,5 @@ module.exports = async (count = 50) => {
     console.error(err);
   } finally {
     console.log("Initial pool closed");
-    pool.end();
   }
 };
