@@ -4,8 +4,7 @@
   "description": "node 14.15.1",
   "main": "chess.js",
   "scripts": {
-    "dev": "npx nodemon server",
-    "news": "node news"
+    "dev": "node index.js"
   },
   "keywords": [],
   "author": "",
