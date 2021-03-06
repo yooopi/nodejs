@@ -1,5 +1,5 @@
 const mysql2 = require("mysql2");
-const config = require("./config");
+const config = require("../configs/mysql");
 const generator = require("unique-names-generator");
 
 const pool = mysql2.createPool(config).promise();
@@ -32,10 +32,15 @@ module.exports = async (count = 50) => {
     pool.getConnection();
     await pool.execute("DROP table Users");
     await pool.execute(
-      `CREATE TABLE IF NOT EXISTS Users(id int auto_increment, name text not null, email varchar(255) not null, isEmailConfirmed boolean not null, constraint Users_pk primary key (id))`
+      `CREATE TABLE IF NOT EXISTS Users(
+        id INT AUTO_INCREMENT,
+        name TEXT NOT NULL,
+        email VARCHAR(255) NOT NULL,
+        isEmailConfirmed BOOLEAN NOT NULL,
+        CONSTRAINT Users_pk PRIMARY KEY (id))`
     );
     await pool.execute(
-      "create unique index Users_email_index on Users (email)"
+      "CREATE UNIQUE INDEX Users_email_index ON Users (email)"
     );
     await initRows(count);
   } catch (err) {
