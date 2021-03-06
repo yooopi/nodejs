@@ -21,10 +21,10 @@ const initRows = async (count) => {
     i++;
   }
   queries = [...new Set(queries)];
-  console.log(`${queries.length} rows was generated!`);
   await pool.execute(
     `INSERT INTO Users (name, email, isEmailConfirmed) VALUES ${[...queries]}`
   );
+  console.log(`${queries.length} rows was generated!`);
 };
 
 module.exports = async (count = 50) => {
@@ -41,6 +41,7 @@ module.exports = async (count = 50) => {
   } catch (err) {
     console.error(err);
   } finally {
-    console.log("Initial pool closed");
+    pool.end();
+    console.log("Initial pool was closed\n");
   }
 };

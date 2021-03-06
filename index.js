@@ -1,14 +1,11 @@
 const mysql2 = require("mysql2");
 const config = require("./config");
 const initUsersTable = require("./initUsersTable");
-const connection = mysql2.createPool(config);
-const init = require("./initUsersTable");
-
 const pool = mysql2.createPool(config).promise();
 
 const Users = {
   create: async (name, email) => {
-    pool
+    return pool
       .execute(
         `INSERT INTO Users (name, email, isEmailConfirmed) VALUES (?, ?, ?)`,
         [name, email, 0]
@@ -22,11 +19,10 @@ const Users = {
   },
 
   searchByName: async (name) => {
-    pool
+    return pool
       .execute(`SELECT * FROM Users WHERE name like ?`, [`%${name}%`])
       .then((res) => {
         console.log(`Was found ${res[0].length} rows`);
-        pool.end();
       })
       .catch((err) => {
         console.error(err.message);
@@ -34,7 +30,7 @@ const Users = {
   },
 
   confirmEmail: async (id, isEmailConfirmed) => {
-    pool
+    return pool
       .execute(`UPDATE Users SET isEmailConfirmed = ? WHERE id = ?`, [
         isEmailConfirmed,
         id,
@@ -52,7 +48,7 @@ const Users = {
   },
 
   delete: async (id) => {
-    pool
+    return pool
       .execute(`DELETE FROM Users WHERE id = ?`, [id])
       .then((res) => {
         if (res) console.log(`Row with id ${id} was deleted`);
@@ -64,9 +60,15 @@ const Users = {
 };
 
 (async () => {
-  await initUsersTable(30);
-  Users.create("Jedi Master Vasak", "yooopi.av@gmail.com");
-  Users.searchByName("Darth");
-  Users.confirmEmail(4, 0);
-  Users.delete(6);
+  try {
+    await initUsersTable(30);
+    await Users.create("Jedi Master Vasak", "yooopi.av@gmail.com");
+    await Users.searchByName("Darth");
+    await Users.confirmEmail(4, 0);
+    await Users.delete(6);
+  } catch (err) {
+    console.error(err.message);
+  } finally {
+    pool.end();
+  }
 })();
