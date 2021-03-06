@@ -1,7 +1,23 @@
 const pool = require("./pool");
 
 module.exports = {
-  create: async (name, email) => {
+  init: async () => {
+    await pool.execute(`SET foreign_key_checks = 0`);
+    await pool.execute(`DROP TABLE IF EXISTS Users`);
+    await pool.execute(`SET foreign_key_checks = 1`);
+    await pool.execute(`CREATE TABLE IF NOT EXISTS Users (
+        id INT AUTO_INCREMENT,
+        name TEXT NOT NULL,
+        email VARCHAR(255) NOT NULL,
+        password TEXT NOT NULL,
+        isEmailConfirmed BOOLEAN NOT NULL,
+        CONSTRAINT Users_pk PRIMARY KEY (id))`);
+    await pool.execute(
+      `CREATE UNIQUE INDEX Users_email_index ON Users (email)`
+    );
+  },
+
+  create: async (name, email, password) => {
     return pool
       .execute(
         `INSERT INTO Users (name, email, isEmailConfirmed) VALUES (?, ?, ?)`,
@@ -9,46 +25,6 @@ module.exports = {
       )
       .then((res) => {
         console.log(`Row was created with id ${res[0]["insertId"]}`);
-      })
-      .catch((err) => {
-        console.error(err.message);
-      });
-  },
-
-  searchByName: async (name) => {
-    return pool
-      .execute(`SELECT * FROM Users WHERE name like ?`, [`%${name}%`])
-      .then((res) => {
-        console.log(`Was found ${res[0].length} rows`);
-      })
-      .catch((err) => {
-        console.error(err.message);
-      });
-  },
-
-  confirmEmail: async (id, isEmailConfirmed) => {
-    return pool
-      .execute(`UPDATE Users SET isEmailConfirmed = ? WHERE id = ?`, [
-        isEmailConfirmed,
-        id,
-      ])
-      .then((res) => {
-        if (res) {
-          console.log(
-            `Email was ${isEmailConfirmed == 1 ? "confirmed" : "unconfirmed"}`
-          );
-        }
-      })
-      .catch((err) => {
-        console.error(err.message);
-      });
-  },
-
-  delete: async (id) => {
-    return pool
-      .execute(`DELETE FROM Users WHERE id = ?`, [id])
-      .then((res) => {
-        if (res) console.log(`Row with id ${id} was deleted`);
       })
       .catch((err) => {
         console.error(err.message);
