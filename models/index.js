@@ -14,10 +14,9 @@ const init = async () => {
   }
 };
 
-init();
-
 module.exports = {
   Users,
   Products,
   Orders,
+  init,
 };

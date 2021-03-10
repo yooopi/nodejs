@@ -1,26 +1,35 @@
 const models = require("../models");
+const bcryptjs = require("bcrypt");
 
 exports.getSignin = (req, res, next) => {
   if (req.session.userId) {
     res.redirect("/orders");
   } else {
-    res.render("signin");
+    res.render("signin", { email: req.cookies.email });
   }
 };
 
 exports.postSignin = async (req, res, next) => {
   const user = await models.Users.getUserByEmail(req.body.email);
+  req.body.remember ? res.cookie("email", req.body.email) : res.clearCookie('email')
 
   if (user) {
-    if (user.password !== req.body.password) {
-      res.render("signin", { error: `Wrong password!` });
+    const isPasswordCorrect = bcryptjs.compareSync(
+      req.body.password,
+      user.password
+    );
+    if (!isPasswordCorrect) {
+      res.render("signin", { email: req.body.email, error: `Wrong password!` });
     } else {
       req.session.userId = user.id;
       req.session.userName = user.name;
       res.redirect("/orders");
     }
   } else {
-    res.render("signin", { error: `No results matching ${req.body.email}` });
+    res.render("signin", {
+      email: req.body.email,
+      error: `No results matching ${req.body.email}`,
+    });
   }
 };
 
@@ -42,7 +51,7 @@ exports.postSignup = async (req, res, next) => {
   const arePasswordsMatch = password === passwordConfirm ? true : false;
 
   if (!isExist && arePasswordsMatch) {
-    await models.Users.create(name, email, password);
+    await models.Users.create(name, email, bcryptjs.hashSync(password, 12));
     const user = await models.Users.getUserByEmail(email);
 
     req.session.userId = user.id;
@@ -63,7 +72,7 @@ exports.postSignup = async (req, res, next) => {
   }
 };
 
-exports.postSignout = (req, res, next) => {
-  req.session.destroy();
+exports.postSignout = async (req, res, next) => {
+  await req.session.destroy();
   res.redirect("/signin");
 };
