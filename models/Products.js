@@ -10,7 +10,19 @@ module.exports = {
       name VARCHAR(255) NOT NULL,
       CONSTRAINT Product_pk
         PRIMARY KEY (id))`);
+    await pool.execute(
+      `INSERT INTO Products (name) VALUES ("pizza"), ("cheeseburger"), ("chicken wings"), ("hot dog")`
+    );
   },
 
-  getProducts: async () => {},
+  getProducts: async () => {
+    return pool
+      .execute(`SELECT * FROM Products`)
+      .then(([res, fields]) => {
+        return res;
+      })
+      .catch((err) => {
+        console.error(err.message);
+      });
+  },
 };

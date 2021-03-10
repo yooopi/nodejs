@@ -1,0 +1,13 @@
+<link rel="stylesheet" href="../public/index.css">
+
+<form action="/signin" method="post" class="auth">
+    <input type="email" name="email" placeholder="Email" required>
+    <input type="password" name="password" placeholder="Password" required>
+{{#if error}}
+<p class="error">{{error}}</p>
+{{/if}}
+    <div class="auth__submit">
+        <a href="/signup">Sign up</a>
+        <button type="submit">Sign in</button>
+    </div>
+</form>

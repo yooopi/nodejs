@@ -1,0 +1,42 @@
+<link rel="stylesheet" href="../public/index.css">
+
+<form action="/signout" method="post" class="profile">
+    <span class="profile__username">{{userName}}</span>
+    <button type="submit">Sign out</button>
+</form>
+
+{{!-- Orders list --}}
+<div class="orders-list" style="">
+    {{#each orders}}
+    <div class="orders-list__item">
+        <form action="/orders/{{this.id}}/edit" method="post" class="orders-list__edit">
+            <h4 class="orders-list__title">Order # {{this.id}}</h4>
+            <select name="product" required>
+                {{#each ../products}}
+                <option value="{{this.id}}" {{isSelected this.id ../this.productId}}>{{this.name}}</option>
+                {{/each}}
+            </select>
+            {{#if this.comment}}
+            <textarea name="comment" rows="3" />{{this.comment}}</textarea>
+            {{/if}}
+            <button type="submit">Edit</button>
+        </form>
+        <form action="/orders/{{this.id}}/delete" method="post" class="orders-list__delete">
+            <button type="submit">Delete</button>
+        </form>
+    </div>
+    {{/each}}
+
+    {{!-- Order create --}}
+    <form action="/orders/create" method="post" class="orders-list__item">
+        <h4 class="orders-list__title">Place new order</h4>
+        <select name="product" class="orders-list__product" required>
+            {{#each products}}
+            <option value="{{this.id}}">{{this.name}}</option>
+            {{/each}}
+        </select>
+        <textarea name="comment" rows="3" /></textarea>
+        <button type="submit" class="orders-list__create">Send</button>
+    </form>
+</div>
+</div>

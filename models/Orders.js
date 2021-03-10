@@ -18,11 +18,29 @@ module.exports = {
         ON UPDATE CASCADE ON DELETE CASCADE)`);
   },
 
-  create: async (userId, productId, comment) => {},
+  create: async (userId, productId, comment) => {
+    await pool.execute(
+      `INSERT INTO Orders (userId, productId, comment) VALUES (?, ?, ?)`,
+      [userId, productId, comment]
+    );
+  },
 
-  getOrders: async (userId) => {},
+  getOrders: async (userId) => {
+    return pool
+      .execute(`SELECT * FROM Orders where userId = ?`, [userId])
+      .then(([res, fields]) => {
+        return res;
+      })
+      .catch((err) => {
+        console.error(err.message);
+      });
+  },
 
-  editOrder: async (orderId, productId, comment) => {},
+  editOrder: async (orderId, productId, comment) => {
+    await pool.execute(`UPDATE Orders SET productId = ?, comment = ? WHERE id = ?`, [productId, comment, orderId])
+  },
 
-  deleteOrder: async (orderId) => {},
+  deleteOrder: async (orderId) => {
+    await pool.execute(`DELETE FROM Orders WHERE id = ?`, [orderId])
+  },
 };

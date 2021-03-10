@@ -10,7 +10,6 @@ module.exports = {
         name TEXT NOT NULL,
         email VARCHAR(255) NOT NULL,
         password TEXT NOT NULL,
-        isEmailConfirmed BOOLEAN NOT NULL,
         CONSTRAINT Users_pk PRIMARY KEY (id))`);
     await pool.execute(
       `CREATE UNIQUE INDEX Users_email_index ON Users (email)`
@@ -18,13 +17,17 @@ module.exports = {
   },
 
   create: async (name, email, password) => {
+    await pool.execute(
+      `INSERT INTO Users (name, email, password) VALUES (?, ?, ?)`,
+      [name, email, password]
+    );
+  },
+
+  getUserByEmail: async (email) => {
     return pool
-      .execute(
-        `INSERT INTO Users (name, email, isEmailConfirmed) VALUES (?, ?, ?)`,
-        [name, email, 0]
-      )
-      .then((res) => {
-        console.log(`Row was created with id ${res[0]["insertId"]}`);
+      .execute(`SELECT * FROM Users WHERE email = ?`, [email])
+      .then(([res, fields]) => {
+        if (res[0]) return res[0];
       })
       .catch((err) => {
         console.error(err.message);
