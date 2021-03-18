@@ -7,9 +7,10 @@ module.exports = {
     await pool.execute(`SET foreign_key_checks = 1`);
     await pool.execute(`CREATE TABLE IF NOT EXISTS Users (
         id INT AUTO_INCREMENT,
+        googleId TEXT,
         name TEXT NOT NULL,
         email VARCHAR(255) NOT NULL,
-        password TEXT NOT NULL,
+        password TEXT NULL,
         CONSTRAINT Users_pk PRIMARY KEY (id))`);
     await pool.execute(
       `CREATE UNIQUE INDEX Users_email_index ON Users (email)`
@@ -29,8 +30,32 @@ module.exports = {
       .then(([res, fields]) => {
         if (res[0]) return res[0];
       })
-      .catch((err) => {
-        console.error(err.message);
-      });
+      .catch((err) => console.error(err.message));
+  },
+
+  findOrCreateGoogle: async (profile) => {
+    const findUserById = async (id) => {
+      return pool
+        .execute(`SELECT * FROM Users WHERE googleId = ?`, [id])
+        .then(([res, fields]) => {
+          if (res[0]) return res[0];
+        })
+        .catch((err) => console.log(err.message));
+    };
+    
+    const isExist = await findUserById(profile.id);
+
+    if (isExist) {
+      console.log("User exist: ", isExist);
+      return isExist;
+    } else {
+      console.log("User doesn't exist");
+      await pool.execute(
+        `INSERT INTO Users (googleId, name, email) VALUES (?, ?, ?)`,
+        [profile.id, profile.displayName, `${profile.id}@gmail.com`]
+      );
+      const user = await findUserById(profile.id);
+      return user;
+    }
   },
 };

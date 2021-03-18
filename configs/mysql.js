@@ -2,5 +2,5 @@ module.exports = {
   host: "localhost",
   user: "root",
   database: "dev",
-  password: "password", // вынести в переменные окружения?
+  password: "A1qwerty", // вынести в переменные окружения?
 };

@@ -33,6 +33,12 @@ exports.postSignin = async (req, res, next) => {
   }
 };
 
+exports.googleSignin = async (req, res, next) => {
+  req.session.userId = req.user.id;
+  req.session.userName = req.user.name;
+  res.redirect("/orders");
+}
+
 exports.getSignup = (req, res, next) => {
   if (req.session.userId) {
     res.redirect("/orders");
@@ -76,3 +82,4 @@ exports.postSignout = async (req, res, next) => {
   await req.session.destroy();
   res.redirect("/signin");
 };
+
