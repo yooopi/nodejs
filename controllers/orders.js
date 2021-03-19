@@ -17,7 +17,7 @@ exports.getOrders = async (req, res, next) => {
 exports.createOrder = async (req, res, next) => {
   await models.Orders.create(
     req.session.userId,
-    req.body.product,
+    req.body.productId,
     req.body.comment
   );
   res.redirect("/orders");
@@ -26,7 +26,7 @@ exports.createOrder = async (req, res, next) => {
 exports.editOrder = async (req, res, next) => {
   await models.Orders.editOrder(
     req.params.id,
-    req.body.product,
+    req.body.productId,
     req.body.comment
   );
   res.redirect("/orders");

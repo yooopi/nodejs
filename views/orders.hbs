@@ -11,7 +11,7 @@
     <div class="orders-list__item">
         <form action="/orders/{{this.id}}/edit" method="post" class="orders-list__edit">
             <h4 class="orders-list__title">Order # {{this.id}}</h4>
-            <select name="product" required>
+            <select name="productId" required>
                 {{#each ../products}}
                 <option value="{{this.id}}" {{isSelected this.id ../this.productId}}>{{this.name}}</option>
                 {{/each}}
@@ -30,7 +30,7 @@
     {{!-- Order create --}}
     <form action="/orders/create" method="post" class="orders-list__item">
         <h4 class="orders-list__title">Place new order</h4>
-        <select name="product" class="orders-list__product" required>
+        <select name="productId" class="orders-list__product" required>
             {{#each products}}
             <option value="{{this.id}}">{{this.name}}</option>
             {{/each}}

@@ -15,6 +15,7 @@ app.set("views", path.join(__dirname, "views"));
 hbsHelpers();
 
 // middlewares
+app.use(express.json())
 app.use(express.urlencoded({ extended: false }));
 app.use("/public", express.static(path.join(__dirname, "public")));
 app.use(cookieParser());
@@ -22,10 +23,10 @@ const config = require("./configs/mysql");
 const sessionStore = new MySQLStore(config);
 app.use(session({ ...sessionCfg, store: sessionStore }));
 
-// Google auth
+// ************** Google auth **************
 const passport = require("passport");
 const GoogleStrategy = require("passport-google-oauth20").Strategy;
-const googleOath20Config = require('./configs/googleOauth20')
+const googleOath20Config = require("./configs/googleOauth20");
 passport.use(
   new GoogleStrategy(
     googleOath20Config,
@@ -46,6 +47,7 @@ passport.deserializeUser((obj, done) => {
 
 app.use(passport.initialize());
 app.use(passport.session());
+// ************** Google auth **************
 
 // router
 const router = require("./routers");

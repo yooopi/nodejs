@@ -46,10 +46,8 @@ module.exports = {
     const isExist = await findUserById(profile.id);
 
     if (isExist) {
-      console.log("User exist: ", isExist);
       return isExist;
     } else {
-      console.log("User doesn't exist");
       await pool.execute(
         `INSERT INTO Users (googleId, name, email) VALUES (?, ?, ?)`,
         [profile.id, profile.displayName, `${profile.id}@gmail.com`]
