@@ -25,4 +25,13 @@ module.exports = {
         console.error(err.message);
       });
   },
+
+  findById: async (productId) => {
+    return pool
+      .execute(`SELECT * FROM Products WHERE id = ?`, [productId])
+      .then(([res, fields]) => {
+        if (res[0]) return res[0];
+      })
+      .catch((err) => console.error(err.message));
+  },
 };

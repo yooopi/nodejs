@@ -16,9 +16,7 @@
                 <option value="{{this.id}}" {{isSelected this.id ../this.productId}}>{{this.name}}</option>
                 {{/each}}
             </select>
-            {{#if this.comment}}
             <textarea name="comment" rows="3" />{{this.comment}}</textarea>
-            {{/if}}
             <button type="submit">Edit</button>
         </form>
         <form action="/orders/{{this.id}}/delete" method="post" class="orders-list__delete">

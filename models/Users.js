@@ -33,6 +33,15 @@ module.exports = {
       .catch((err) => console.error(err.message));
   },
 
+  getUserById: async (userId) => {
+    return pool
+      .execute(`SELECT * FROM Users WHERE id = ?`, [userId])
+      .then(([res, fields]) => {
+        if (res[0]) return res[0];
+      })
+      .catch((err) => console.error(err.message));
+  },
+
   findOrCreateGoogle: async (profile) => {
     const findUserById = async (id) => {
       return pool

@@ -87,10 +87,15 @@ exports.checkJWT = async (req, res, next) => {
       description: "Missing required param `jwtToken`",
     });
   }
-  
+
   try {
     const tokenValidation = jwt.verify(req.body.jwtToken, jwtConfig.secret);
-    console.log(tokenValidation);
+    if (!(await models.Users.getUserById(tokenValidation.userId))) {
+      return res.json({
+        status: "Error",
+        description: "User doesn't exist!",
+      });
+    }
     req.body.userId = tokenValidation.userId;
     next();
   } catch (err) {
