@@ -30,5 +30,6 @@ module.exports = async (source, count) => {
     return news.splice(0, count);
   } catch(err) {
     console.log(`Error: ${err}`)
+    throw err;
   }
 };
