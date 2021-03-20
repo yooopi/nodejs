@@ -19,17 +19,17 @@ const data = {
 };
 
 module.exports = async (source, count) => {
-  const res = await axios
-    .get(data[source].url)
-    .then((res) => {
-      const news = [];
-      const $ = cheerio.load(res.data);
-      $(data[source].selector).each(function (i, elem) {
-        news.push($(this).text());
-      });
-
-      return news.splice(0, count);
-    })
-    .catch((err) => console.log(`Error: ${err}`));
-  return res;
+  try{  
+    const res = await axios
+      .get(data[source].url);
+    const news = [];
+    const $ = cheerio.load(res.data);
+    $(data[source].selector).each(function (i, elem) {
+      news.push($(this).text());
+    });
+    return news.splice(0, count);
+  } catch(err) {
+    console.log(`Error: ${err}`)
+    throw err;
+  }
 };
