@@ -7,7 +7,7 @@ const sessionCfg = require("./configs/session");
 const hbsHelpers = require("./views/helpers");
 const models = require("./models");
 const cookieParser = require("cookie-parser");
-models.init();
+// models.init();
 
 // config
 app.set("view engine", "hbs");
@@ -15,13 +15,45 @@ app.set("views", path.join(__dirname, "views"));
 hbsHelpers();
 
 // middlewares
-app.use(express.json())
+app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use("/public", express.static(path.join(__dirname, "public")));
 app.use(cookieParser());
 const config = require("./configs/mysql");
 const sessionStore = new MySQLStore(config);
-app.use(session({ ...sessionCfg, store: sessionStore }));
+const sessionMiddleware = session({ ...sessionCfg, store: sessionStore });
+app.use(sessionMiddleware);
+
+// socket.io
+const http = require("http").createServer(app);
+const io = require("socket.io")(http);
+
+io.use((socket, next) => {
+  sessionMiddleware(socket.request, {}, next);
+});
+
+io.on("connection", (socket) => {
+  if (!socket.request.session.userName) {
+    console.error("Unauthorised user connected!");
+    socket.disconnect();
+    return;
+  }
+
+  console.log(`userId = ${socket.request.session.userId} connected`);
+
+  socket.on("disconnect", () => {
+    console.log(`userId = ${socket.request.session.userId} disconnected`);
+  });
+
+  socket.on("chatMessage", (data) => {
+    models.ChatsMessages.create("1", socket.request.session.userId, data.message);
+    data.author = socket.request.session.userName
+    // data.chatId = socket.request
+    console.log(socket.request.params)
+    console.log(data)
+    io.emit("chatMessage", data);
+  });
+});
 
 // ************** Google auth **************
 const passport = require("passport");
@@ -55,6 +87,6 @@ app.use(router);
 
 // START APP
 
-app.listen(8080, () => {
+http.listen(8080, () => {
   console.log(`Server started at http://localhost:8080`);
 });

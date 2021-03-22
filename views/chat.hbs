@@ -1,0 +1,80 @@
+<!doctype html>
+<html>
+
+<head>
+    <title>Chat</title>
+    <link rel="stylesheet" href="../public/chat.css">
+</head>
+
+<body>
+    <div class="container">
+        <div class="chats-list">
+            <div class="chats-list__items">
+                {{#each chatsList}}
+                <a href="/chats/{{this.id}}">{{this.name}}</a>
+                {{/each}}
+            </div>
+            <form action="/chats/create" method="post" class="chats-list__create">
+                <input type="text" name="chatName" placeholder="Write chat name" required>
+                <button type="submit">Create new chat</button>
+            </form>
+        </div>
+        <div class="chat">
+            <ul id="messages">
+                {{#each messages}}
+                <li class="messages__item">
+                    <span class="messages__author">{{this.name}}</span>
+                    <span class="messages__txt">{{this.message}}</span>
+                </li>
+                {{/each}}
+            </ul>
+            {{#unless chatId}}
+            <h2 class="chat-not-selected">Please, select chat</h2>
+            {{/unless}}
+            {{#if chatId}}
+            <form action="/chat/send" method="post" class="message-form">
+                <input id="m" autocomplete="off" required placeholder="Write a message..." /><button
+                    class="message-form__submit" onClick="submitMessage(event)" type="submit">Send</button>
+            </form>
+            {{/if}}
+        </div>
+    </div>
+
+    <script src="/socket.io/socket.io.js"></script>
+    <script>
+        const socket = io();
+
+        function submitMessage(e) {
+            const messageEl = document.getElementById('m');
+
+            e.preventDefault();
+            if (messageEl.value === '') { alert('Write something'); return false }
+            socket.emit('chatMessage', { message: messageEl.value });
+            messageEl.value = '';
+            messageEl.focus();
+            return false;
+        }
+
+        socket.on('chatMessage', function (msg) {
+            const messagesEl = document.getElementById('messages');
+
+            const messageEl = document.createElement('li');
+            const messageEltitle = document.createElement('span');
+            const messageEltxt = document.createElement('span');
+            messageEl.className = 'messages__item';
+            messageEltitle.className = 'messages__author';
+            messageEltxt.className = 'messages__txt';
+
+            messageEltitle.textContent = msg.author;
+            messageEltxt.textContent = msg.message;
+
+            messageEl.appendChild(messageEltitle);
+            messageEl.appendChild(messageEltxt);
+            messagesEl.appendChild(messageEl);
+            messageEl.scrollIntoView()
+        });
+
+    </script>
+</body>
+
+</html>
