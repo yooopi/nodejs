@@ -6,6 +6,7 @@ const MySQLStore = require("express-mysql-session")(session);
 const sessionCfg = require("./configs/session");
 const hbsHelpers = require("./views/helpers");
 const models = require("./models");
+const controllers = require("./controllers");
 const cookieParser = require("cookie-parser");
 // models.init();
 
@@ -39,6 +40,10 @@ io.on("connection", (socket) => {
     return;
   }
 
+  socket.on("joinRoom", (chatId) => {
+    socket.join(chatId);
+  });
+
   console.log(`userId = ${socket.request.session.userId} connected`);
 
   socket.on("disconnect", () => {
@@ -46,12 +51,14 @@ io.on("connection", (socket) => {
   });
 
   socket.on("chatMessage", (data) => {
-    models.ChatsMessages.create("1", socket.request.session.userId, data.message);
-    data.author = socket.request.session.userName
-    // data.chatId = socket.request
-    console.log(socket.request.params)
-    console.log(data)
-    io.emit("chatMessage", data);
+    models.ChatsMessages.create(
+      data.chatId,
+      socket.request.session.userId,
+      data.message
+    );
+    data.author = socket.request.session.userName;
+    console.log("chat id from joinRoom: ", data.chatId)
+    io.to(data.chatId).emit("chatMessage", data);
   });
 });
 
