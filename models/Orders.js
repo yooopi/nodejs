@@ -19,24 +19,23 @@ module.exports = {
   },
 
   create: async (userId, productId, comment = "") => {
-    return await pool.execute(
+    pool.execute(
       `INSERT INTO Orders (userId, productId, comment) VALUES (?, ?, ?)`,
-      [userId, productId, comment],
-      (error, results, fields) => {
-        console.log(res.insertId);
-      }
+      [userId, productId, comment]
     );
   },
 
   getOrders: async (userId) => {
-    return pool
-      .execute(`SELECT * FROM Orders where userId = ?`, [userId])
-      .then(([res, fields]) => {
-        return res;
-      })
-      .catch((err) => {
-        console.error(err.message);
-      });
+    try {
+      const [
+        res,
+        fields,
+      ] = await pool.execute(`SELECT * FROM Orders where userId = ?`, [userId]);
+
+      return res;
+    } catch (err) {
+      throw Error(err.message);
+    }
   },
 
   getOrderById: async (orderId) => {

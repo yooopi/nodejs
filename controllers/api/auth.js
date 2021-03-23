@@ -4,80 +4,74 @@ const jwt = require("jsonwebtoken");
 const jwtConfig = require("../../configs/jwt");
 
 exports.postSignin = async (req, res, next) => {
-  if (!req.body.email || !req.body.password) {
+  if (!req.body.email || !req.body.password)
     return res.json({
       status: "Error",
       description: "Required params `email` or `password` are missed",
     });
-  }
 
   const user = await models.Users.getUserByEmail(req.body.email);
-  if (user) {
-    const isPasswordCorrect = bcryptjs.compareSync(
-      req.body.password,
-      user.password
-    );
-    if (!isPasswordCorrect) {
-      res.json({ status: "Error", description: "Wrong password!" });
-    } else {
-      const token = jwt.sign(
-        { userId: user.id, userEmail: user.email, userName: user.name },
-        jwtConfig.secret,
-        jwtConfig.options
-      );
-      res.json({ status: "Successful", jwtToken: token });
-    }
-  } else {
-    res.json({
+
+  if (!user)
+    return res.json({
       status: "Error",
       description: `No results matching ${req.body.email}`,
     });
+
+  const isPasswordCorrect = bcryptjs.compareSync(
+    req.body.password,
+    user.password
+  );
+
+  if (!isPasswordCorrect) {
+    return res.json({ status: "Error", description: "Wrong password!" });
   }
+
+  const token = jwt.sign(
+    { userId: user.id, userEmail: user.email, userName: user.name },
+    jwtConfig.secret,
+    jwtConfig.options
+  );
+
+  res.json({ status: "Successful", jwtToken: token });
 };
 
 exports.postSignup = async (req, res, next) => {
-  if (
-    !req.body.name ||
-    !req.body.email ||
-    !req.body.password ||
-    !req.body.passwordConfirm
-  ) {
+  const { name, email, password, passwordConfirm } = req.body;
+
+  if (!name || !email || !password || !passwordConfirm)
     return res.json({
       status: "Error",
       description:
         "Missing some of required params `email`, `name, `password` or `passwordConfirm`",
     });
-  }
 
-  const name = req.body.name;
-  const email = req.body.email;
-  const password = req.body.password;
-  const passwordConfirm = req.body.passwordConfirm;
-
-  const isExist = (await models.Users.getUserByEmail(email)) ? true : false;
+  const isExist = await models.Users.getUserByEmail(email);
   const arePasswordsMatch = password === passwordConfirm ? true : false;
 
-  if (!isExist && arePasswordsMatch) {
-    await models.Users.create(name, email, bcryptjs.hashSync(password, 12));
-    const user = await models.Users.getUserByEmail(email);
-    const token = jwt.sign(
-      { userId: user.id, userEmail: user.email, userName: user.name },
-      jwtConfig.secret,
-      jwtConfig.options
-    );
-
-    res.json({ status: "Successful", jwtToken: token });
-  } else if (isExist) {
+  if (isExist) {
     return res.json({
       status: "Error",
       description: "User with such email already exist!",
     });
-  } else if (!arePasswordsMatch) {
+  }
+
+  if (!arePasswordsMatch) {
     return res.json({
       status: "Error",
       description: "Passwords doesn't match!",
     });
   }
+
+  await models.Users.create(name, email, bcryptjs.hashSync(password, 12));
+  const user = await models.Users.getUserByEmail(email);
+  const token = jwt.sign(
+    { userId: user.id, userEmail: user.email, userName: user.name },
+    jwtConfig.secret,
+    jwtConfig.options
+  );
+
+  res.json({ status: "Successful", jwtToken: token });
 };
 
 exports.checkJWT = async (req, res, next) => {

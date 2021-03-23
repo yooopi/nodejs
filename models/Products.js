@@ -15,7 +15,7 @@ module.exports = {
     );
   },
 
-  getProducts: async () => {
+  getProducts: () => {
     return pool
       .execute(`SELECT * FROM Products`)
       .then(([res, fields]) => {

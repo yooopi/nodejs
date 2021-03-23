@@ -1,5 +1,4 @@
-const express = require("express");
-const router = express.Router();
+const router = require("express").Router();
 const controllers = require("../../controllers");
 
 router.get("/", controllers.api.auth.checkJWT, controllers.api.orders.getOrders);
